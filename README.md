@@ -51,3 +51,6 @@ Contributors
 Your Name
 License
 This project is licensed under the MIT License.
+
+
+*Note: This project is executed in a vitrual env so use chatbot-env\Scripts\activate and don't forget to re-install the dependencies.*
