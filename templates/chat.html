@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Wine ChatBot</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="title">Wine ChatBot</div>
+        <div class="box" id="chat-box">
+            <div class="item">
+                <div class="icon">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="msg">
+                    <p>Hello, ask me about any kind of wine!!!</p>
+                </div>
+            </div>
+            <br clear="both">
+        </div>
+        <div class="typing-area">
+            <div class="input-field">
+                <input id="user-input" type="text" placeholder="Type your message" required>
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('send-button').addEventListener('click', function() {
+            var userInput = document.getElementById('user-input').value;
+            if (userInput.trim() !== "") {
+                addUserMessage(userInput);
+                fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: userInput }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addBotMessage(data.response);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                document.getElementById('user-input').value = "";
+            }
+        });
+
+        function addUserMessage(message) {
+            var chatBox = document.getElementById('chat-box');
+            var userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'item right';
+            userMsgDiv.innerHTML = `<div class="msg"><p>${message}</p></div>`;
+            chatBox.appendChild(userMsgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function addBotMessage(message) {
+            var chatBox = document.getElementById('chat-box');
+            var botMsgDiv = document.createElement('div');
+            botMsgDiv.className = 'item';
+            botMsgDiv.innerHTML = `<div class="icon"><i class="fa fa-user"></i></div><div class="msg"><p>${message}</p></div>`;
+            chatBox.appendChild(botMsgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
